@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { resolvePostAuthDestination, setPendingRole, type AppRole } from "@/lib/user-setup";
 
 export const Route = createFileRoute("/auth/signup")({
@@ -35,17 +34,24 @@ function SignupPage() {
   const onGoogle = async () => {
     setGoogleLoading(true);
     setPendingRole(role, name || undefined);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/onboarding",
+    const { data: oauthData, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + "/onboarding",
+      },
     });
-    if (result.error) {
-      toast.error("Could not sign up with Google");
+    if (error) {
+      toast.error(error.message || "Could not sign up with Google");
       setGoogleLoading(false);
       return;
     }
-    if (result.redirected) return;
+    if (oauthData?.url) {
+      window.location.assign(oauthData.url);
+      return;
+    }
     const { data } = await supabase.auth.getUser();
     const dest = data.user ? await resolvePostAuthDestination(data.user.id) : "/onboarding";
+    setGoogleLoading(false);
     navigate({ to: dest });
   };
 

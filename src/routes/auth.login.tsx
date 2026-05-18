@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { resolvePostAuthDestination } from "@/lib/user-setup";
 
 export const Route = createFileRoute("/auth/login")({
@@ -29,17 +28,24 @@ function LoginPage() {
 
   const onGoogle = async () => {
     setGoogleLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { data: oauthData, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
     });
-    if (result.error) {
-      toast.error("Could not sign in with Google");
+    if (error) {
+      toast.error(error.message || "Could not sign in with Google");
       setGoogleLoading(false);
       return;
     }
-    if (result.redirected) return;
+    if (oauthData?.url) {
+      window.location.assign(oauthData.url);
+      return;
+    }
     const { data } = await supabase.auth.getUser();
     const dest = data.user ? await resolvePostAuthDestination(data.user.id) : "/";
+    setGoogleLoading(false);
     navigate({ to: dest });
   };
 
