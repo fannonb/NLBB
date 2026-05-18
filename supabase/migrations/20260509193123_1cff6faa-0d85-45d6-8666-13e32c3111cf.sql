@@ -1,0 +1,1 @@
+ALTER TABLE public.favorites ALTER COLUMN provider_id TYPE text;
