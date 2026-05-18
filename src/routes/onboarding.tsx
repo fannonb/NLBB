@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { resolvePostAuthDestination } from "@/lib/user-setup";
 
 export const Route = createFileRoute("/onboarding")({
-  head: () => ({ meta: [{ title: "Setting up your account — Lustre" }] }),
+  head: () => ({ meta: [{ title: "Setting up your account — NLBB" }] }),
   component: OnboardingRedirect,
 });
 

@@ -41,7 +41,7 @@ export function ValueProps() {
         <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background/60 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-accent backdrop-blur">
             <Sparkles className="h-3 w-3" />
-            Why Lustre
+            Why NLBB
           </span>
           <h2 className="mt-3 font-serif text-2xl sm:text-3xl">
             Beauty, booked beautifully

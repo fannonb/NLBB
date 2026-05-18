@@ -74,14 +74,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lustre — Book beauty services near you" },
+      { title: "NLBB — Book beauty services near you" },
       {
         name: "description",
         content:
           "Discover and book trusted barbers, salons, nail studios, masseuses and tattoo artists near you across Kenya.",
       },
-      { name: "author", content: "Lustre" },
-      { property: "og:title", content: "Lustre — Book beauty services near you" },
+      { name: "author", content: "NLBB" },
+      { property: "og:title", content: "NLBB — Book beauty services near you" },
       {
         property: "og:description",
         content:
@@ -93,7 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#0f172a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Lustre" },
+      { name: "apple-mobile-web-app-title", content: "NLBB" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

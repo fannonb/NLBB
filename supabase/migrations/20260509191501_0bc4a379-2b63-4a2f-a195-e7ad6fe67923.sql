@@ -1,5 +1,4 @@
 CREATE UNIQUE INDEX IF NOT EXISTS reviews_booking_id_unique ON public.reviews(booking_id);
-
 CREATE OR REPLACE FUNCTION public.recompute_provider_rating()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -17,7 +16,6 @@ BEGIN
   RETURN NULL;
 END;
 $function$;
-
 DROP TRIGGER IF EXISTS reviews_recompute_rating ON public.reviews;
 CREATE TRIGGER reviews_recompute_rating
 AFTER INSERT OR UPDATE OR DELETE ON public.reviews

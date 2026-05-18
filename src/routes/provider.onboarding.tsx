@@ -12,7 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ensureRole } from "@/lib/user-setup";
 
 export const Route = createFileRoute("/provider/onboarding")({
-  head: () => ({ meta: [{ title: "List your business — Lustre" }] }),
+  head: () => ({ meta: [{ title: "List your business — NLBB" }] }),
   component: ProviderOnboardingPage,
 });
 

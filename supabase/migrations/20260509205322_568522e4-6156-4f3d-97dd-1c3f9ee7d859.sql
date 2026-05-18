@@ -2,7 +2,6 @@
 INSERT INTO public.user_roles (user_id, role)
 SELECT id, 'admin'::app_role FROM auth.users WHERE email = 'wiztechintegratedsystems@gmail.com'
 ON CONFLICT (user_id, role) DO NOTHING;
-
 -- Promote by email (admin only, max 3 admins)
 CREATE OR REPLACE FUNCTION public.promote_admin_by_email(_email text)
 RETURNS jsonb
@@ -38,7 +37,6 @@ BEGIN
   RETURN jsonb_build_object('ok', true, 'user_id', target);
 END;
 $$;
-
 -- Revoke admin (admin only, keep at least 1)
 CREATE OR REPLACE FUNCTION public.revoke_admin(_target uuid)
 RETURNS jsonb
@@ -62,7 +60,6 @@ BEGIN
   RETURN jsonb_build_object('ok', true);
 END;
 $$;
-
 -- List admins with email + display name (admin only)
 CREATE OR REPLACE FUNCTION public.list_admins()
 RETURNS TABLE(user_id uuid, email text, display_name text)
@@ -83,7 +80,6 @@ BEGIN
     ORDER BY u.email;
 END;
 $$;
-
 REVOKE EXECUTE ON FUNCTION public.promote_admin_by_email(text) FROM anon;
 REVOKE EXECUTE ON FUNCTION public.revoke_admin(uuid) FROM anon;
 REVOKE EXECUTE ON FUNCTION public.list_admins() FROM anon;

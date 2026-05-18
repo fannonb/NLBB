@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getUserRole } from "@/lib/user-setup";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Lustre" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — NLBB" }] }),
   component: DashboardRouter,
 });
 

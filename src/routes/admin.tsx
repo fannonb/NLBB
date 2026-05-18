@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getUserRole } from "@/lib/user-setup";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Lustre" }] }),
+  head: () => ({ meta: [{ title: "Admin — NLBB" }] }),
   component: AdminPage,
 });
 

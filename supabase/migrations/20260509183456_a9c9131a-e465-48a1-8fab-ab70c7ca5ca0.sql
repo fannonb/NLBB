@@ -1,15 +1,12 @@
-
 -- ENUMS
 CREATE TYPE public.app_role AS ENUM ('customer', 'provider', 'admin');
 CREATE TYPE public.booking_status AS ENUM ('pending', 'accepted', 'rejected', 'completed', 'cancelled');
 CREATE TYPE public.subscription_status AS ENUM ('inactive', 'active', 'expired', 'cancelled');
 CREATE TYPE public.payment_status AS ENUM ('pending', 'success', 'failed');
-
 -- updated_at helper
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
-
 -- PROFILES
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -23,7 +20,6 @@ CREATE POLICY "Profiles viewable by everyone" ON public.profiles FOR SELECT USIN
 CREATE POLICY "Users insert own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = user_id);
 CREATE TRIGGER profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
 -- USER ROLES
 CREATE TABLE public.user_roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -33,15 +29,12 @@ CREATE TABLE public.user_roles (
   UNIQUE (user_id, role)
 );
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
-
 CREATE OR REPLACE FUNCTION public.has_role(_user_id UUID, _role app_role)
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role);
 $$;
-
 CREATE POLICY "Roles readable by signed-in users" ON public.user_roles FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Admins manage roles" ON public.user_roles FOR ALL USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
-
 -- AUTO PROFILE + ROLE
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
@@ -52,7 +45,6 @@ BEGIN
   RETURN NEW;
 END; $$;
 CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
 -- CATEGORIES
 CREATE TABLE public.categories (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -63,7 +55,6 @@ CREATE TABLE public.categories (
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Categories viewable by everyone" ON public.categories FOR SELECT USING (true);
 CREATE POLICY "Admins manage categories" ON public.categories FOR ALL USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
-
 -- PROVIDERS
 CREATE TABLE public.providers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -82,7 +73,6 @@ CREATE TABLE public.providers (
 );
 ALTER TABLE public.providers ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER providers_updated_at BEFORE UPDATE ON public.providers FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
 -- SUBSCRIPTIONS (created before the active-subscription helper)
 CREATE TABLE public.subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -96,7 +86,6 @@ CREATE TABLE public.subscriptions (
 );
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER subscriptions_updated_at BEFORE UPDATE ON public.subscriptions FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
 CREATE OR REPLACE FUNCTION public.provider_has_active_subscription(_provider_id UUID)
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (
@@ -104,7 +93,6 @@ RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
     WHERE provider_id = _provider_id AND status = 'active' AND (expires_at IS NULL OR expires_at > now())
   );
 $$;
-
 -- Provider policies
 CREATE POLICY "Public can view active subscribed providers" ON public.providers FOR SELECT
   USING (is_active = true AND public.provider_has_active_subscription(id));
@@ -114,13 +102,11 @@ CREATE POLICY "Owner can insert own provider" ON public.providers FOR INSERT WIT
 CREATE POLICY "Owner can update own provider" ON public.providers FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Admin can update any provider" ON public.providers FOR UPDATE USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admin can delete provider" ON public.providers FOR DELETE USING (public.has_role(auth.uid(), 'admin'));
-
 -- Subscription policies
 CREATE POLICY "Owner views own subscription" ON public.subscriptions FOR SELECT
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
 CREATE POLICY "Admin views subscriptions" ON public.subscriptions FOR SELECT USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admin manages subscriptions" ON public.subscriptions FOR ALL USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
-
 -- PROVIDER <-> CATEGORIES
 CREATE TABLE public.provider_categories (
   provider_id UUID NOT NULL REFERENCES public.providers(id) ON DELETE CASCADE,
@@ -132,7 +118,6 @@ CREATE POLICY "Provider categories viewable by everyone" ON public.provider_cate
 CREATE POLICY "Owner manages own provider categories" ON public.provider_categories FOR ALL
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
-
 -- SERVICES
 CREATE TABLE public.services (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -151,7 +136,6 @@ CREATE POLICY "Owner manages own services" ON public.services FOR ALL
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
 CREATE TRIGGER services_updated_at BEFORE UPDATE ON public.services FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
 -- PROVIDER IMAGES
 CREATE TABLE public.provider_images (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -165,7 +149,6 @@ CREATE POLICY "Provider images viewable by everyone" ON public.provider_images F
 CREATE POLICY "Owner manages own gallery" ON public.provider_images FOR ALL
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
-
 -- AVAILABILITY
 CREATE TABLE public.provider_availability (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -180,7 +163,6 @@ CREATE POLICY "Availability viewable by everyone" ON public.provider_availabilit
 CREATE POLICY "Owner manages availability" ON public.provider_availability FOR ALL
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
-
 -- BOOKINGS
 CREATE TABLE public.bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -206,7 +188,6 @@ CREATE POLICY "Customer updates own booking" ON public.bookings FOR UPDATE USING
 CREATE POLICY "Provider updates incoming booking" ON public.bookings FOR UPDATE
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
 CREATE TRIGGER bookings_updated_at BEFORE UPDATE ON public.bookings FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
 -- REVIEWS
 CREATE TABLE public.reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -222,7 +203,6 @@ CREATE POLICY "Reviews viewable by everyone" ON public.reviews FOR SELECT USING 
 CREATE POLICY "Customer writes own review" ON public.reviews FOR INSERT WITH CHECK (auth.uid() = customer_id);
 CREATE POLICY "Customer updates own review" ON public.reviews FOR UPDATE USING (auth.uid() = customer_id);
 CREATE POLICY "Customer deletes own review" ON public.reviews FOR DELETE USING (auth.uid() = customer_id);
-
 -- PAYMENTS
 CREATE TABLE public.payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -239,7 +219,6 @@ CREATE POLICY "Owner views own payments" ON public.payments FOR SELECT
   USING (EXISTS (SELECT 1 FROM public.providers p WHERE p.id = provider_id AND p.user_id = auth.uid()));
 CREATE POLICY "Admin views payments" ON public.payments FOR SELECT USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admin manages payments" ON public.payments FOR ALL USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
-
 -- NOTIFICATIONS
 CREATE TABLE public.notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -251,7 +230,6 @@ CREATE TABLE public.notifications (
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users see own notifications" ON public.notifications FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users update own notifications" ON public.notifications FOR UPDATE USING (auth.uid() = user_id);
-
 -- SEED CATEGORIES
 INSERT INTO public.categories (slug, name, description, icon, sort_order) VALUES
   ('salons', 'Salons', 'Hair styling, treatments and full salon services', 'scissors', 1),
@@ -259,7 +237,6 @@ INSERT INTO public.categories (slug, name, description, icon, sort_order) VALUES
   ('nails', 'Nail Parlors', 'Manicures, pedicures, gels and nail art', 'sparkles', 3),
   ('massage', 'Massage', 'Relaxation, deep tissue and wellness massage', 'hand', 4),
   ('tattoo', 'Tattoo Artists', 'Custom designs, cover-ups and piercings', 'pen-tool', 5);
-
 -- INDEXES
 CREATE INDEX idx_providers_active ON public.providers(is_active);
 CREATE INDEX idx_provider_categories_cat ON public.provider_categories(category_id);

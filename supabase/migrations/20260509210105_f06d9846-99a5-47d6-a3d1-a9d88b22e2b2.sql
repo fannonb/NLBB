@@ -1,4 +1,3 @@
-
 -- List customers (anyone with the 'customer' role) with basic info
 CREATE OR REPLACE FUNCTION public.list_customers()
 RETURNS TABLE(
@@ -30,7 +29,6 @@ BEGIN
     ORDER BY u.created_at DESC;
 END;
 $$;
-
 -- Suspend / unsuspend any user (set banned_until far future or null)
 CREATE OR REPLACE FUNCTION public.admin_set_user_suspended(_target uuid, _suspended boolean)
 RETURNS jsonb
@@ -51,7 +49,6 @@ BEGIN
   RETURN jsonb_build_object('ok', true);
 END;
 $$;
-
 -- Delete a user account entirely
 CREATE OR REPLACE FUNCTION public.admin_delete_user(_target uuid)
 RETURNS jsonb
@@ -77,7 +74,6 @@ BEGIN
   RETURN jsonb_build_object('ok', true);
 END;
 $$;
-
 -- Admin delete a single provider business
 CREATE OR REPLACE FUNCTION public.admin_delete_provider(_provider uuid)
 RETURNS jsonb
@@ -91,7 +87,6 @@ BEGIN
   RETURN jsonb_build_object('ok', true);
 END;
 $$;
-
 REVOKE EXECUTE ON FUNCTION public.list_customers() FROM anon;
 REVOKE EXECUTE ON FUNCTION public.admin_set_user_suspended(uuid, boolean) FROM anon;
 REVOKE EXECUTE ON FUNCTION public.admin_delete_user(uuid) FROM anon;

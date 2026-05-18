@@ -125,8 +125,8 @@ export const providers: Provider[] = [
     hours: standardHours,
   },
   {
-    id: "lustre-nails",
-    name: "Lustre Nail Bar",
+    id: "nlbb-nails",
+    name: "NLBB Nail Bar",
     category: "Nails",
     categorySlug: "nails",
     rating: 4.9,

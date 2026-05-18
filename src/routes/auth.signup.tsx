@@ -12,10 +12,10 @@ import { resolvePostAuthDestination, setPendingRole, type AppRole } from "@/lib/
 export const Route = createFileRoute("/auth/signup")({
   head: () => ({
     meta: [
-      { title: "Create your account — Lustre" },
+      { title: "Create your account — NLBB" },
       {
         name: "description",
-        content: "Sign up to Lustre as a customer or service provider.",
+        content: "Sign up to NLBB as a customer or service provider.",
       },
     ],
   }),
@@ -110,7 +110,7 @@ function SignupPage() {
   return (
     <AuthLayout
       title="Create your account"
-      subtitle="Join Lustre as a customer or list your beauty business."
+      subtitle="Join NLBB as a customer or list your beauty business."
       footer={
         <>
           Already have an account?{" "}

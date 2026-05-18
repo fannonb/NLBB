@@ -10,13 +10,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/provider/subscription")({
-  head: () => ({ meta: [{ title: "Subscription — Lustre" }] }),
+  head: () => ({ meta: [{ title: "Subscription — NLBB" }] }),
   component: SubscriptionPage,
 });
 
 const PRICE_KES = 500;
 const PAYBILL = "247247";
-const ACCOUNT_PREFIX = "LUSTRE";
+const ACCOUNT_PREFIX = "NLBB";
 
 type Sub = { id: string; status: string; expires_at: string | null; started_at: string | null };
 type Payment = {

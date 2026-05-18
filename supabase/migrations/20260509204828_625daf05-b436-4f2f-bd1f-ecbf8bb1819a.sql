@@ -1,4 +1,3 @@
-
 CREATE OR REPLACE FUNCTION public.notify_provider_new_booking()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -22,7 +21,6 @@ BEGIN
   RETURN NEW;
 END;
 $function$;
-
 CREATE OR REPLACE FUNCTION public.notify_customer_status_change()
 RETURNS trigger
 LANGUAGE plpgsql

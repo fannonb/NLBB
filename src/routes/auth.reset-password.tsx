@@ -11,8 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth/reset-password")({
   head: () => ({
     meta: [
-      { title: "Set a new password — Lustre" },
-      { name: "description", content: "Choose a new password for your Lustre account." },
+      { title: "Set a new password — NLBB" },
+      { name: "description", content: "Choose a new password for your NLBB account." },
     ],
   }),
   component: ResetPasswordPage,

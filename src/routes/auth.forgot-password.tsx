@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Reset your password — Lustre" },
+      { title: "Reset your password — NLBB" },
       { name: "description", content: "We'll email you a reset link." },
     ],
   }),

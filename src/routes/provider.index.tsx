@@ -18,7 +18,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/provider/")({
-  head: () => ({ meta: [{ title: "Provider dashboard — Lustre" }] }),
+  head: () => ({ meta: [{ title: "Provider dashboard — NLBB" }] }),
   component: ProviderDashboardPage,
 });
 

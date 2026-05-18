@@ -2,8 +2,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type AppRole = "customer" | "provider" | "admin";
 
-const PENDING_ROLE_KEY = "lustre.pendingRole";
-const PENDING_NAME_KEY = "lustre.pendingName";
+const PENDING_ROLE_KEY = "nlbb.pendingRole";
+const PENDING_NAME_KEY = "nlbb.pendingName";
 
 export function setPendingRole(role: AppRole, name?: string) {
   try {

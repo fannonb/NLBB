@@ -12,8 +12,8 @@ import { resolvePostAuthDestination } from "@/lib/user-setup";
 export const Route = createFileRoute("/auth/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — Lustre" },
-      { name: "description", content: "Sign in to Lustre to book and manage appointments." },
+      { title: "Sign in — NLBB" },
+      { name: "description", content: "Sign in to NLBB to book and manage appointments." },
     ],
   }),
   component: LoginPage,
