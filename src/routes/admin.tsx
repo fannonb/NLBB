@@ -269,7 +269,7 @@ function AdminPage() {
           <Stat label="Bookings" value={bookingsCount} />
           <Stat label="Reviews" value={reviewsCount} />
           <Stat label="Pending payments" value={pendingPayments.length} />
-          <Stat label="Verified" value={providers.filter((p) => p.is_verified).length} />
+          <Stat label="Customers" value={customers.length} />
           <Stat label="Revenue (KES)" value={Math.round(revenueCents / 100)} />
           <Stat label="Inactive" value={providers.filter((p) => !p.is_active).length} />
         </div>
